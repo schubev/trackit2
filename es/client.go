@@ -37,6 +37,8 @@ func init() {
 	os.Exit(1)
 }
 
+// getElasticSearchConfig builds the ClientOptionFuncs to configure the
+// server's ElasticSearch client.
 func getElasticSearchConfig() []elastic.ClientOptionFunc {
 	return []elastic.ClientOptionFunc{
 		getElasticSearchUrlConfig(),
@@ -44,10 +46,14 @@ func getElasticSearchConfig() []elastic.ClientOptionFunc {
 	}
 }
 
+// getElasitcSearchUrlConfig builds the ClientOptionFunc to set the server's
+// ElasticSearch client remote URL to that provided by the 'config' module.
 func getElasticSearchUrlConfig() elastic.ClientOptionFunc {
 	return elastic.SetURL(config.EsAddress)
 }
 
+// getElasticSearchAuthConfig builds the ClientOptionFunc to set the server's
+// authentication method. It recognizes 'basic:user:password' and 'none'.
 func getElasticSearchAuthConfig() elastic.ClientOptionFunc {
 	authType, authValue := getElasticSearchAuthTypeAndValue()
 	logger := jsonlog.DefaultLogger
@@ -64,6 +70,8 @@ func getElasticSearchAuthConfig() elastic.ClientOptionFunc {
 	return configNoop
 }
 
+// getElasticSearchBasicAuth builds the ClientOptionFunc to get basic
+// authentication on the ElasticSearch client.
 func getElasticSearchBasicAuth(auth string) elastic.ClientOptionFunc {
 	parts := strings.SplitN(auth, ":", 2)
 	if len(parts) == 2 {
@@ -76,6 +84,8 @@ func getElasticSearchBasicAuth(auth string) elastic.ClientOptionFunc {
 	}
 }
 
+// getElasticSearchAuthTypeAndValue splits an ElasticSearch Authentication
+// configuration string into its type and values, separated by a colon.
 func getElasticSearchAuthTypeAndValue() (string, string) {
 	parts := strings.SplitN(config.EsAuthentication, ":", 2)
 	if len(parts) == 0 {
@@ -87,4 +97,6 @@ func getElasticSearchAuthTypeAndValue() (string, string) {
 	}
 }
 
+// confignoop is a ClientOptionFunc that changes nothing to the ElasticSearch
+// client.
 func configNoop(_ *elastic.Client) error { return nil }
